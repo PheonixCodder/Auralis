@@ -1,4 +1,7 @@
 import { Button } from "@workspace/ui/components/button"
+import { useQuery } from "convex/react"
+import { api } from "@workspace/backend/convex/_generated/api"
+
 
 export default function Page() {
   return (
