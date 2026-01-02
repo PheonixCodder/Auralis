@@ -17,6 +17,8 @@ export const OrganizationGuard = ({ children }: { children: ReactNode }) => {
     }
 
     return (
+        <>
         {children}
+        </>
     )
 }
