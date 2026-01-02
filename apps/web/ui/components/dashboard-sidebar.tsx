@@ -80,7 +80,7 @@ const DashboardSidebar = () => {
                 <SidebarMenu>
                     {customerSupportItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton isActive={isActive(item.url)} asChild>
+                            <SidebarMenuButton isActive={isActive(item.url)} className={cn(isActive(item.url) && "bg-linear-to-b from-sidebar-primary to-blue-600! text-sidebar-primary-foreground! hover:to-blue-600/90")} asChild>
                                 <Link href={item.url}>
                                 <item.icon className='size-4' />
                                 <span>{item.title}</span>
@@ -97,7 +97,7 @@ const DashboardSidebar = () => {
                 <SidebarMenu>
                     {configurationItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton isActive={isActive(item.url)} asChild>
+                            <SidebarMenuButton isActive={isActive(item.url)} className={cn(isActive(item.url) && "bg-linear-to-b from-sidebar-primary to-blue-600! text-sidebar-primary-foreground! hover:to-blue-600/90")} asChild>
                                 <Link href={item.url}>
                                 <item.icon className='size-4' />
                                 <span>{item.title}</span>
@@ -114,7 +114,7 @@ const DashboardSidebar = () => {
                 <SidebarMenu>
                     {accountItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton isActive={isActive(item.url)} asChild>
+                            <SidebarMenuButton isActive={isActive(item.url)} className={cn(isActive(item.url) && "bg-linear-to-b from-sidebar-primary to-blue-600! text-sidebar-primary-foreground! hover:to-blue-600/90")} asChild>
                                 <Link href={item.url}>
                                 <item.icon className='size-4' />
                                 <span>{item.title}</span>
@@ -139,6 +139,7 @@ const DashboardSidebar = () => {
             </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }
