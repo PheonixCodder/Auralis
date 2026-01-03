@@ -1,3 +1,4 @@
+"use client"
 import { WidgetHeader } from '@/modules/widget/ui/components/widget-header';
 import { Button } from '@workspace/ui/components/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
@@ -8,6 +9,8 @@ import z from 'zod';
 import { useMutation } from "convex/react"
 import { api } from '@workspace/backend/convex/_generated/api';
 import { Doc } from '@workspace/backend/convex/_generated/dataModel';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { contactSessionIdAtomFamily, orgIdAtom } from '../../atoms/widget-atoms';
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is Required"),
@@ -16,7 +19,8 @@ const formSchema = z.object({
 
 
 export const WidgetAuthScreen = () => {
-    const organizationId = "dc"
+    const organizationId = useAtomValue(orgIdAtom)
+    const setContactSessionId = useSetAtom(contactSessionIdAtomFamily(organizationId || ""))
     const createContactSession = useMutation(api.public.contactSessions.create)
     
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -41,6 +45,7 @@ export const WidgetAuthScreen = () => {
             organizationId,
             metadata
         })
+        setContactSessionId(contactSessionId)
     }
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -52,7 +57,7 @@ export const WidgetAuthScreen = () => {
     return (
         <>
         <WidgetHeader>
-            <div className="flex flex-col justify-between gap-y-2 px-2 py-6">
+            <div className="flex flex-col justify-between gap-y-2 px-2 py-6 font-semibold">
                 <p className="text-3xl">Hi there!</p>
                 <p className="text-lg">Let&apos;s get you started</p>
             </div>
@@ -62,7 +67,7 @@ export const WidgetAuthScreen = () => {
                 <FormField control={form.control} name='name' render={({field}) => (
                     <FormItem>
                         <FormControl>
-                            <Input className='h-10 bg-background' placeholder='e.g John Doe' type='text' {...field}/>
+                            <Input className='h-10 bg-background' placeholder='e.g  John Doe' type='text' {...field}/>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -70,7 +75,7 @@ export const WidgetAuthScreen = () => {
                 <FormField control={form.control} name='email' render={({field}) => (
                     <FormItem>
                         <FormControl>
-                            <Input className='h-10 bg-background' placeholder='e.g johndoe@gmail.com' type='email' {...field}/>
+                            <Input className='h-10 bg-background' placeholder='e.g  johndoe@gmail.com' type='email' {...field}/>
                         </FormControl>
                         <FormMessage />
                     </FormItem>

@@ -1,4 +1,21 @@
-import { atom } from "jotai"
-import { WidgetScreen } from "../types"
+import { atom } from "jotai";
+import { WidgetScreen } from "../types";
+import { atomFamily } from "jotai-family";
+import { atomWithStorage } from "jotai/utils";
+import { CONTACT_SESSION_KEY } from "../constants";
+import { Id } from "@workspace/backend/convex/_generated/dataModel";
 
-export const screenAtom = atom<WidgetScreen>("auth")
+export const screenAtom = atom<WidgetScreen>("auth");
+
+export const orgIdAtom = atom<string | null>(null);
+
+export const contactSessionIdAtomFamily = atomFamily((orgId: string) =>
+  atomWithStorage<Id<"contactSessions"> | null>(
+    `${CONTACT_SESSION_KEY}_${orgId}`,
+    null
+  )
+);
+
+export const errorMessageAtom = atom<string | null>(null);
+
+export const loadingMessageAtom = atom<string | null>(null);
