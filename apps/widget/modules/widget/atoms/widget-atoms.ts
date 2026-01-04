@@ -9,6 +9,8 @@ export const screenAtom = atom<WidgetScreen>("auth");
 
 export const orgIdAtom = atom<string | null>(null);
 
+export const conversationIdAtom = atom<Id<"conversations"> | null>(null);
+
 export const contactSessionIdAtomFamily = atomFamily((orgId: string) =>
   atomWithStorage<Id<"contactSessions"> | null>(
     `${CONTACT_SESSION_KEY}_${orgId}`,
