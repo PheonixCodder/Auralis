@@ -8,6 +8,7 @@ import { Button } from "@workspace/ui/components/button"
 import { useMutation } from "convex/react"
 import { api } from "@workspace/backend/convex/_generated/api"
 import { useState } from "react"
+import { WidgetFooter } from "../components/widget-footer"
 
 export const WidgetSelectionScreen = () => {
     const setScreen = useSetAtom(screenAtom)
@@ -15,7 +16,6 @@ export const WidgetSelectionScreen = () => {
     const orgId = useAtomValue(orgIdAtom)
     const contactSessionId = useAtomValue(contactSessionIdAtomFamily(orgId || ""))
     const setConversationId = useSetAtom(conversationIdAtom)
-    
     const createConversation = useMutation(api.public.conversations.create)
     const [isPending, setIsPending] = useState(false)
 
@@ -58,6 +58,7 @@ export const WidgetSelectionScreen = () => {
                 <ChevronRightIcon />
             </Button>
         </div>
+        <WidgetFooter />
         </>
     )
 }
