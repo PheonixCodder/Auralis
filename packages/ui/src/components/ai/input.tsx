@@ -17,6 +17,7 @@ import {
 } from "@workspace/ui/components/select";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { cn } from "@workspace/ui/lib/utils";
+import { forwardRef } from "react";
 
 type UseAutoResizeTextareaProps = {
   minHeight: number;
@@ -90,50 +91,57 @@ export type AIInputTextareaProps = ComponentProps<typeof Textarea> & {
   maxHeight?: number;
 };
 
-export const AIInputTextarea = ({
-  onChange,
-  className,
-  placeholder = "What would you like to know?",
-  minHeight = 48,
-  maxHeight = 164,
-  ...props
-}: AIInputTextareaProps) => {
-  const { textareaRef, adjustHeight } = useAutoResizeTextarea({
-    minHeight,
-    maxHeight,
-  });
 
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      const form = e.currentTarget.form;
-      if (form) {
-        form.requestSubmit();
-      }
-    }
-  };
+export const AIInputTextarea = forwardRef<
+  HTMLTextAreaElement,
+  AIInputTextareaProps
+>(
+  (
+    {
+      onChange,
+      className,
+      placeholder = "What would you like to know?",
+      minHeight = 48,
+      maxHeight = 164,
+      ...props
+    },
+    ref
+  ) => {
+    const { textareaRef, adjustHeight } = useAutoResizeTextarea({
+      minHeight,
+      maxHeight,
+    });
 
-  return (
-    <Textarea
-      className={cn(
-        "text-sm!",
-        "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
-        "bg-transparent dark:bg-transparent",
-        "focus-visible:ring-0",
-        className
-      )}
-      name="message"
-      onChange={(e) => {
-        adjustHeight();
-        onChange?.(e);
-      }}
-      onKeyDown={handleKeyDown}
-      placeholder={placeholder}
-      ref={textareaRef}
-      {...props}
-    />
-  );
-};
+    // merge RHF ref + internal ref
+    const setRefs = (node: HTMLTextAreaElement | null) => {
+      textareaRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = node;
+    };
+
+    return (
+      <Textarea
+        {...props}
+        ref={setRefs}
+        className={cn(
+          "text-sm!",
+          "w-full resize-none rounded-none border-none p-3 shadow-none outline-none ring-0",
+          "bg-transparent dark:bg-transparent",
+          "focus-visible:ring-0",
+          className
+        )}
+        placeholder={placeholder}
+        onChange={(e) => {
+          adjustHeight();
+          onChange?.(e);
+        }}
+      />
+    );
+  }
+);
+
+AIInputTextarea.displayName = "AIInputTextarea";
+
 
 export type AIInputToolbarProps = HTMLAttributes<HTMLDivElement>;
 

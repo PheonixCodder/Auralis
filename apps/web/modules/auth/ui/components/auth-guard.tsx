@@ -4,13 +4,14 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import AuthLayout from "../layouts/auth-layout";
 import SignInView from "../views/sign-in-view";
 import { ReactNode } from "react";
+import { Spinner } from "@workspace/ui/components/spinner";
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
     return (
         <>
         <AuthLoading>
         <AuthLayout>
-            <p>Loading</p>
+            <Spinner />
         </AuthLayout>
         </AuthLoading>
         <Authenticated>

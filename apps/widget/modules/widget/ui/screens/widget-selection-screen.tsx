@@ -49,7 +49,7 @@ export const WidgetSelectionScreen = () => {
                 <p className="text-lg">Let&apos;s get you started</p>
             </div>
         </WidgetHeader>
-        <div className="flex flex-1 flex-col items-center justify-center gap-y-4 p-4 overflow-y-auto">
+        <div className="flex flex-1 flex-col gap-y-4 p-4 overflow-y-auto">
             <Button disabled={isPending} className="h-16 w-full justify-between" variant={"outline"} onClick={handleNewChat}>
                 <div className="flex items-center gap-x-2">
                     <MessageSquareTextIcon />

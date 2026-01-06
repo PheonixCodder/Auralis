@@ -12,7 +12,7 @@ import { WidgetChatScreen } from "../screens/widget-chat-screen";
 import { WidgetInboxScreen } from "../screens/widget-inbox-screen";
 
 interface Props {
-    organizationId: string
+  organizationId: string | null;
 }
 
 export const WidgetView = ({ organizationId }: Props) => {

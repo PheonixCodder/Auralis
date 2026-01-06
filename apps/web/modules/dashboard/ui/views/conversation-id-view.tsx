@@ -1,3 +1,5 @@
+"use client";
+
 import { api } from "@workspace/backend/convex/_generated/api";
 import { Id } from "@workspace/backend/convex/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
@@ -24,7 +26,7 @@ import {
 import { AIResponse } from "@workspace/ui/components/ai/response";
 import { Form, FormField } from "@workspace/ui/components/form";
 import z from "zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toUIMessages, useThreadMessages } from "@convex-dev/agent/react";
 import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar";
@@ -76,6 +78,7 @@ const ConversationIdView = ({
   const createMessage = useMutation(api.private.messages.create);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values ,5)
     try {
       await createMessage({
         conversationId,
@@ -185,62 +188,59 @@ const ConversationIdView = ({
       </AIConversation>
       <div className="p-2">
         <Form {...form}>
-          <AIInput onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              disabled={
-                conversation?.status === "resolved" ||
-                form.formState.isSubmitting ||
-                isEnhancing
-              }
-              name="message"
-              render={({ field }) => (
-                <AIInputTextarea
-                  disabled={conversation?.status === "resolved"}
-                  onChange={field.onChange}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }
-                  }}
-                  placeholder={
-                    conversation?.status === "resolved"
-                      ? "This conversation has been resolved"
-                      : "Type your response as an operator..."
-                  }
-                  value={field.value}
-                />
-              )}
-            />
-            <AIInputToolbar>
-              <AIInputTools>
-                <AIInputButton
-                  onClick={handleEnhanceResponse}
-                  disabled={
-                    conversation?.status === "resolved" ||
-                    isEnhancing ||
-                    !form.formState.isValid
-                  }
-                  type="button"
-                >
-                  <Wand2Icon className="size-5" />
-                  Enhance
-                </AIInputButton>
-              </AIInputTools>
-              <AIInputSubmit
-                disabled={
-                  conversation?.status === "resolved" ||
-                  !form.formState.isValid ||
-                  form.formState.isSubmitting ||
-                  isEnhancing
-                }
-                type="submit"
-                status="ready"
-              />
-            </AIInputToolbar>
-          </AIInput>
-        </Form>
+  <AIInput onSubmit={form.handleSubmit(onSubmit)}>
+    <Controller
+  control={form.control}
+  name="message"
+  render={({ field }) => (
+    <AIInputTextarea
+      {...field}
+      disabled={conversation?.status === "resolved"}
+      placeholder={
+        conversation?.status === "resolved"
+          ? "This conversation has been resolved"
+          : "Type your response as an operator..."
+      }
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          form.handleSubmit(onSubmit)();
+        }
+      }}
+    />
+  )}
+/>
+
+    <AIInputToolbar>
+      <AIInputTools>
+        <AIInputButton
+          type="button"
+          onClick={handleEnhanceResponse}
+          disabled={
+            conversation?.status === "resolved" ||
+            isEnhancing ||
+            !form.formState.isValid
+          }
+        >
+          <Wand2Icon className="size-5" />
+          Enhance
+        </AIInputButton>
+      </AIInputTools>
+
+      <AIInputSubmit
+        type="submit"
+        status="ready"
+        disabled={
+          conversation?.status === "resolved" ||
+          !form.formState.isValid ||
+          form.formState.isSubmitting ||
+          isEnhancing
+        }
+      />
+    </AIInputToolbar>
+  </AIInput>
+</Form>
+
       </div>
     </div>
   );

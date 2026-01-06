@@ -5,7 +5,7 @@ import { atomWithStorage } from "jotai/utils";
 import { CONTACT_SESSION_KEY } from "../constants";
 import { Id } from "@workspace/backend/convex/_generated/dataModel";
 
-export const screenAtom = atom<WidgetScreen>("auth");
+export const screenAtom = atom<WidgetScreen>("loading");
 
 export const orgIdAtom = atom<string | null>(null);
 
