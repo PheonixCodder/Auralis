@@ -3,7 +3,7 @@ import { cn } from "../lib/utils.js";
 
 interface ConversationStatusIconProps {
     status: "unresolved" | "escalated" | "resolved"
-    className: string
+    className?: string
 }
 
 const statusConfig = {

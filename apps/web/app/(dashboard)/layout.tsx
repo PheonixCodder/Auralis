@@ -1,4 +1,4 @@
-import { DashboardLayout } from '@/ui/layouts/dashboard-layout'
+import { DashboardLayout } from '@/modules/dashboard/ui/layouts/dashboard-layout'
 import { ReactNode } from 'react'
 
 const Layout = ({ children }: { children: ReactNode }) => {

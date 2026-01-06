@@ -19,7 +19,7 @@ import { Form, useForm } from "react-hook-form"
 import { FormField } from "@workspace/ui/components/form"
 import { useInfiniteScroll } from "@workspace/ui/hooks/use-infinite-scroll"
 import { InfiniteScrollTrigger } from "@workspace/ui/components/infinite-scroll-trigger"
-import { DicebearAvatar } from "../components/dicebear-avatar"
+import { DicebearAvatar } from "@workspace/ui/components/dicebear-avatar"
 
 const formSchema = z.object({
     message: z.string().min(1, "Message is Required")
@@ -82,7 +82,7 @@ export const WidgetChatScreen = () => {
         </WidgetHeader>
         <AIConversation>
             <AIConversationContent>
-                <InfiniteScrollTrigger canLoadMore={canLoadMore} isLoadingMore={isLoadingMore} onLoadMore={handleLoadMore} ref={topElementRef}  />
+                <InfiniteScrollTrigger canLoadMore={canLoadMore} isLoadingMore={isLoadingMore} onLoadMore={handleLoadMore} ref={topElementRef} />
                 {toUIMessages(messages.results ?? []).map((message) => {
                     return (
                         <AIMessage key={message.id} from={message.role === "user" ? "user" : "assistant"}>
