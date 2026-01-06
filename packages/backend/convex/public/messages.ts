@@ -1,8 +1,11 @@
 import { ConvexError, v } from "convex/values";
 import { action, query } from "../_generated/server";
-import { internal } from "../_generated/api";
+import { components, internal } from "../_generated/api";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
+import { resolveConversationTool } from "../system/ai/tools/resolveConversation";
+import { escalateConversationTool } from "../system/ai/tools/escalateConversation";
+import { saveMessage } from "@convex-dev/agent";
 
 export const create = action({
   args: {
@@ -46,13 +49,23 @@ export const create = action({
       });
     }
 
-    await supportAgent.generateText(
-      ctx,
-      { threadId },
-      {
+    const shouldTriggerAgent = conversation.status === "unresolved";
+
+    if (shouldTriggerAgent) {
+      await supportAgent.generateText(
+        ctx,
+        { threadId },
+        {
+          prompt,
+          tools: { resolveConversationTool, escalateConversationTool },
+        }
+      );
+    } else {
+      await saveMessage(ctx, components.agent, {
+        threadId,
         prompt,
-      }
-    );
+      });
+    }
   },
 });
 
@@ -74,7 +87,7 @@ export const getMany = query({
 
     const paginated = await supportAgent.listMessages(ctx, {
       threadId: args.threadId,
-      paginationOpts: args.paginationOpts
+      paginationOpts: args.paginationOpts,
     });
 
     return paginated;

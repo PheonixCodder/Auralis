@@ -1,9 +1,50 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "../_generated/server";
+import { action, mutation, query } from "../_generated/server";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
 import { components } from "../_generated/api";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+export const enhanceResponse = action({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, { prompt }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Organization not found",
+      });
+    }
+
+    const response = await generateText({
+      model: openai("gpt-4o-mini"),
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a customer support AI assistant. Enhance customer support responses to be more empathetic and helpful. While maintaining their intent and key information",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+
+    return response.text;
+  },
+});
 
 export const create = mutation({
   args: {
@@ -53,13 +94,13 @@ export const create = mutation({
     }
 
     await saveMessage(ctx, components.agent, {
-          threadId: conversation.threadId,
-          agentName: identity.familyName,
-          message: {
-            role: "assistant",
-            content: prompt,
-          }
-        })
+      threadId: conversation.threadId,
+      agentName: identity.familyName,
+      message: {
+        role: "assistant",
+        content: prompt,
+      },
+    });
   },
 });
 
