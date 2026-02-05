@@ -6,6 +6,7 @@ import { saveMessage } from "@convex-dev/agent";
 import { components } from "../_generated/api";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
 
 export const enhanceResponse = action({
   args: {
@@ -32,8 +33,7 @@ export const enhanceResponse = action({
       messages: [
         {
           role: "system",
-          content:
-            "You are a customer support AI assistant. Enhance customer support responses to be more empathetic and helpful. While maintaining their intent and key information",
+          content: OPERATOR_MESSAGE_ENHANCEMENT_PROMPT
         },
         {
           role: "user",
