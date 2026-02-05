@@ -1,7 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { action, mutation } from "../_generated/server";
+import { action, mutation, query, QueryCtx } from "../_generated/server";
 import {
   contentHashFromArrayBuffer,
+  Entry,
+  EntryId,
   guessMimeTypeFromContents,
   guessMimeTypeFromExtension,
   vEntryId,
@@ -9,6 +11,7 @@ import {
 import { extractTextContent } from "../lib/extractTextContent";
 import rag from "../system/rag";
 import { Id } from "../_generated/dataModel";
+import { paginationOptsValidator } from "convex/server";
 
 function guessMimeType(fileName: string, bytes: ArrayBuffer): string {
   return (
@@ -72,12 +75,12 @@ export const deleteFile = mutation({
 
 export const addFile = action({
   args: {
-    fileName: v.string(),
+    filename: v.string(),
     mimeType: v.string(),
     bytes: v.bytes(),
     category: v.optional(v.string()),
   },
-  handler: async (ctx, { fileName, mimeType, bytes, category }) => {
+  handler: async (ctx, { filename, mimeType, bytes, category }) => {
     const identity = await ctx.auth.getUserIdentity();
     if (identity === null) {
       throw new ConvexError({
@@ -93,7 +96,7 @@ export const addFile = action({
       });
     }
 
-    const newMimeType = mimeType || guessMimeType(fileName, bytes);
+    const newMimeType = mimeType || guessMimeType(filename, bytes);
 
     const blob = new Blob([bytes], { type: newMimeType });
 
@@ -101,7 +104,7 @@ export const addFile = action({
 
     const text = await extractTextContent(ctx, {
       storageId,
-      fileName,
+      fileName: filename,
       bytes,
       mimeType: newMimeType,
     });
@@ -109,14 +112,14 @@ export const addFile = action({
     const { entryId, created } = await rag.add(ctx, {
       namespace: orgId,
       text,
-      key: fileName,
-      title: fileName,
+      key: filename,
+      title: filename,
       metadata: {
         storageId,
         uploadedBy: orgId,
-        fileName,
+        filename,
         category: category || null,
-      },
+      } as EntryMetaData,
       contentHash: await contentHashFromArrayBuffer(bytes),
     });
 
@@ -128,3 +131,125 @@ export const addFile = action({
     return { url: await ctx.storage.getUrl(storageId), entryId };
   },
 });
+
+export const list = query({
+  args: {
+    category: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
+  },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+    const orgId = identity.orgId as string;
+    if (!orgId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Organization not found",
+      });
+    }
+
+    const namespace = await rag.getNamespace(ctx, {
+      namespace: orgId,
+    });
+
+    if (!namespace) {
+      return { page: [], isDone: true, continueCursor: "" };
+    }
+
+    const results = await rag.list(ctx, {
+      namespaceId: namespace.namespaceId,
+      paginationOpts: args.paginationOpts,
+    });
+
+    const files = await Promise.all(
+      results.page.map((e) => convertEntryToPublicFile(ctx, e)),
+    );
+
+    const filteredFiles = args.category
+      ? files.filter((f) => f.category === args.category)
+      : files;
+
+    return {
+      page: filteredFiles,
+      isDone: results.isDone,
+      continueCursor: results.continueCursor,
+    };
+  },
+});
+
+export type PublicFile = {
+  id: EntryId;
+  name: string;
+  type: string;
+  size: string;
+  status: "ready" | "processing" | "error";
+  url: string | null;
+  category?: string;
+};
+
+type EntryMetaData = {
+  storageId: Id<"_storage">;
+  uploadedBy: string;
+  filename: string;
+  category: string | null;
+};
+
+async function convertEntryToPublicFile(
+  ctx: QueryCtx,
+  entry: Entry,
+): Promise<PublicFile> {
+  const metadata = entry.metadata as EntryMetaData;
+  const storageId = metadata.storageId;
+
+  let fileSize = "unknown";
+
+  if (storageId) {
+    try {
+      const storageMetadata = await ctx.db.system.get(storageId);
+      if (storageMetadata) {
+        fileSize = formatFileSize(storageMetadata.size);
+      }
+    } catch (err) {
+      console.error("Failed to get storage metadata", err);
+    }
+  }
+
+  const filename = entry.key || "Unknown";
+  const extension = filename.split(".").pop()?.toLocaleLowerCase() || "txt";
+
+  let status: "ready" | "processing" | "error" = "error";
+  if (entry.status === "ready") {
+    status = "ready";
+  } else if (entry.status === "pending") {
+    status = "processing";
+  }
+
+  const url = storageId ? await ctx.storage.getUrl(storageId) : null;
+
+  return {
+    id: entry.entryId,
+    name: filename,
+    type: extension,
+    size: fileSize,
+    status,
+    url,
+    category: metadata.category || undefined,
+  };
+}
+
+function formatFileSize(size: number): string {
+  if (size === 0) {
+    return "0 B";
+  }
+
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(size) / Math.log(k));
+
+  return `${Number.parseFloat((size / k ** i).toFixed(1))} ${sizes[i]}`;
+}
