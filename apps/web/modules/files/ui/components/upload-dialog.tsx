@@ -127,8 +127,8 @@ export const UploadDialog = ({
             onDrop={handleFileDrop}
             accept={{
               "application/pdf": [".pdf"],
-              "test/csv": [".csv"],
-              "test/plain": [".txt"],
+              "text/csv": [".csv"],
+              "text/plain": [".txt"],
             }}
             disabled={isUploading}
             maxFiles={1}

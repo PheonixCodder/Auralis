@@ -149,8 +149,11 @@ export const FilesView = () => {
                               <MoreHorizontalIcon />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent onClick={() => handleDeleteClick(file)} align="end">
-                            <DropdownMenuItem className="text-destructive">
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteClick(file)}
+                              className="text-destructive"
+                            >
                               <TrashIcon className="size-4 mr-2" />
                               Delete
                             </DropdownMenuItem>
