@@ -15,12 +15,14 @@
   "dependencies": {
     "@ai-sdk/google": "2",
     "@ai-sdk/openai": "2",
+    "@aws-sdk/client-ssm": "^3.984.0",
     "@clerk/backend": "^2.29.0",
     "@convex-dev/agent": "^0.3.2",
     "@convex-dev/agent-playground": "^0.0.20",
     "@convex-dev/rag": "^0.6.1",
     "@openrouter/ai-sdk-provider": "1.5.4",
     "@types/node": "^25.0.3",
+    "@vapi-ai/server-sdk": "^0.11.0",
     "ai": "5",
     "convex": "^1.31.2",
     "convex-helpers": "^0.1.108"
