@@ -129,6 +129,7 @@
         "@convex-dev/rag": "^0.6.1",
         "@openrouter/ai-sdk-provider": "1.5.4",
         "@types/node": "^25.0.3",
+        "@vapi-ai/server-sdk": "^0.11.0",
         "ai": "5",
         "convex": "^1.31.2",
         "convex-helpers": "^0.1.108",
@@ -1143,6 +1144,8 @@
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.39.0", "", { "dependencies": { "@typescript-eslint/types": "8.39.0", "eslint-visitor-keys": "4.2.1" } }, "sha512-ldgiJ+VAhQCfIjeOgu8Kj5nSxds0ktPOSO9p4+0VDH2R2pLvQraaM5Oen2d7NxzMCm+Sn/vJT+mv2H5u6b/3fA=="],
 
     "@ungap/structured-clone": ["@ungap/structured-clone@1.3.0", "", {}, "sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g=="],
+
+    "@vapi-ai/server-sdk": ["@vapi-ai/server-sdk@0.11.0", "", {}, "sha512-anfCbCY3k3vh5RKX8noN4p2QOK3k1ezRT31nHReVCjr3oMlex+Bjk4G9Ze4ZrezKrP8KssbuITuB7OeZ0egIQQ=="],
 
     "@vapi-ai/web": ["@vapi-ai/web@2.5.2", "", { "dependencies": { "@daily-co/daily-js": "^0.85.0", "events": "^3.3.0" } }, "sha512-mT4DjApi0/0+EK77h2xOLq3qVBa7rv3JNQ+gFWuhFE4YdGYxI51+fn8bQI9N535+zU/Z4jFKXotdBHQJ3filHA=="],
 
