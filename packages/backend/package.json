@@ -15,6 +15,7 @@
   "dependencies": {
     "@ai-sdk/google": "2",
     "@ai-sdk/openai": "2",
+    "@aws-sdk/client-ssm": "^3.984.0",
     "@clerk/backend": "^2.29.0",
     "@convex-dev/agent": "^0.3.2",
     "@convex-dev/agent-playground": "^0.0.20",
