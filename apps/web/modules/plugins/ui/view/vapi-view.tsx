@@ -173,7 +173,6 @@ const VapiPluginRemoveForm = ({
       });
       setOpen(false);
       toast.success("Vapi plugin removed successfully");
-      setOpen(false);
     } catch (error) {
       toast.error("Failed to remove Vapi plugin");
     }
