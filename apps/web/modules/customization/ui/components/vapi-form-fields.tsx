@@ -107,7 +107,7 @@ export const VapiFormFields = ({ form }: VapiFormFieldsProps) => {
               </SelectContent>
             </Select>
             <FormDescription>
-              The Vapi Assistant to use for voice calls.
+              The Phone Numbers to use for voice calls.
             </FormDescription>
           </FormItem>
         )}

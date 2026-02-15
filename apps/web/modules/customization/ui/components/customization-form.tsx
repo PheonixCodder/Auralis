@@ -122,7 +122,7 @@ export const CustomizationForm = ({
                   <FormField
                     control={form.control}
                     name="defaultSuggestions.suggestion1"
-                    render={(field) => (
+                    render={({ field }) => (
                       <FormItem>
                         <FormLabel>Suggestion 1</FormLabel>
                         <FormControl>
@@ -186,7 +186,9 @@ export const CustomizationForm = ({
           </Card>
         )}
         <div className="flex justify-end">
-          <Button disabled={form.formState.isSubmitting} type="submit"></Button>
+          <Button disabled={form.formState.isSubmitting} type="submit">
+            Save Settings
+          </Button>
         </div>
       </form>
     </Form>
