@@ -78,7 +78,7 @@ export const VapiFormFields = ({ form }: VapiFormFieldsProps) => {
           <FormItem>
             <FormLabel>Phone Numbers</FormLabel>
             <Select
-              disabled={disabled || assistantsLoading}
+              disabled={disabled || phoneNumbersLoading}
               onValueChange={field.onChange}
               value={field.value}
             >
