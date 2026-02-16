@@ -23,7 +23,7 @@ export const getMany = query({
     const conversations = await ctx.db
       .query("conversations")
       .withIndex("by_contact_session_id", (q) =>
-        q.eq("contactSessionId", args.contactSessionId)
+        q.eq("contactSessionId", args.contactSessionId),
       )
       .order("desc")
       .paginate(args.paginationOpts);
@@ -48,7 +48,7 @@ export const getMany = query({
           threadId: conversation.threadId,
           lastMsg,
         };
-      })
+      }),
     );
 
     return {
@@ -110,6 +110,13 @@ export const create = mutation({
       });
     }
 
+    const widgetSettings = await ctx.db
+      .query("widgetSettings")
+      .withIndex("by_organization_id", (q) =>
+        q.eq("organizationId", args.organizationId),
+      )
+      .unique();
+
     const { threadId } = await supportAgent.createThread(ctx, {
       userId: args.organizationId,
     });
@@ -118,9 +125,10 @@ export const create = mutation({
       threadId,
       message: {
         role: "assistant",
-        content: "Hello! How can I assist you today?",
-      }
-    })
+        content:
+          widgetSettings?.greetMessage ?? "Hello! How can I assist you today?",
+      },
+    });
 
     const conversationId = await ctx.db.insert("conversations", {
       contactSessionId: session._id,
