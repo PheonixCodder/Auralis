@@ -13,7 +13,6 @@ import { useVapi } from "../../hooks/use-vapi";
 import { WidgetHeader } from "../components/widget-header";
 import { screenAtom } from "../../atoms/widget-atoms";
 import { useSetAtom } from "jotai";
-import { WidgetFooter } from "../components/widget-footer";
 import { cn } from "@workspace/ui/lib/utils";
 
 export const WidgetVoiceScreen = () => {
@@ -34,7 +33,10 @@ export const WidgetVoiceScreen = () => {
           <Button
             variant={"transparent"}
             size={"icon"}
-            onClick={() => setScreen("selection")}
+            onClick={() => {
+              endCall();
+              setScreen("selection");
+            }}
           >
             <ArrowLeftIcon />
           </Button>
@@ -42,7 +44,7 @@ export const WidgetVoiceScreen = () => {
         </div>
       </WidgetHeader>
       {transcript.length > 0 ? (
-        <AIConversation className="h-full flex-1">
+        <AIConversation className="h-full">
           <AIConversationContent>
             {transcript.map((message, index) => (
               <AIMessage
@@ -50,10 +52,10 @@ export const WidgetVoiceScreen = () => {
                 key={`${message.role}-${index}-${message.text}`}
               >
                 <AIMessageContent>{message.text}</AIMessageContent>
-                <AIConversationScrollButton />
               </AIMessage>
             ))}
           </AIConversationContent>
+          <AIConversationScrollButton />
         </AIConversation>
       ) : (
         <div className="flex-1 flex h-full flex-col items-center justify-center gap-y-2">
