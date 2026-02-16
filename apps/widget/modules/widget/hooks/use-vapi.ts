@@ -1,6 +1,8 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import Vapi from "@vapi-ai/web";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
+import { vapiSecretsAtom, widgetSettingsAtom } from "../atoms/widget-atoms";
 
 interface TranscriptMessage {
   role: "user" | "assistant";
@@ -14,8 +16,12 @@ export const useVapi = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
 
+  const vapiSecrets = useAtomValue(vapiSecretsAtom);
+  const widgetSettings = useAtomValue(widgetSettingsAtom);
+
   useEffect(() => {
-    const vapiInstance = new Vapi(process.env.VAPI_PUBLIC_API_KEY!);
+    if (!vapiSecrets) return;
+    const vapiInstance = new Vapi(vapiSecrets.publicApiKey);
     setVapi(vapiInstance);
 
     vapiInstance.on("call-start", () => {
@@ -59,9 +65,10 @@ export const useVapi = () => {
     };
   }, []);
   const startCall = () => {
+    if (!vapiSecrets || !widgetSettings?.vapiSettings.assistantId) return;
     setIsConnecting(true);
     if (vapi) {
-      vapi.start("2a0bb009-6356-4bca-a65c-d49757088669");
+      vapi.start(widgetSettings?.vapiSettings.assistantId); // 2a0bb009-6356-4bca-a65c-d49757088669
     }
   };
   const endCall = () => {

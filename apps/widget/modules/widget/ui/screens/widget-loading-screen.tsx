@@ -8,6 +8,7 @@ import {
   loadingMessageAtom,
   orgIdAtom,
   screenAtom,
+  vapiSecretsAtom,
   widgetSettingsAtom,
 } from "@/modules/widget/atoms/widget-atoms";
 import { WidgetHeader } from "../components/widget-header";
@@ -32,6 +33,7 @@ export const WidgetLoadingScreen = ({
   const setErrorMessage = useSetAtom(errorMessageAtom);
   const setLoadingMessage = useSetAtom(loadingMessageAtom);
   const setScreen = useSetAtom(screenAtom);
+  const setVapiSecrets = useSetAtom(vapiSecretsAtom);
 
   const contactSessionId = useAtomValue(
     contactSessionIdAtomFamily(organizationId || ""),
@@ -115,9 +117,32 @@ export const WidgetLoadingScreen = ({
     setLoadingMessage("Loading Widget Settings");
     if (widgetSettings !== undefined) {
       setWidgetSettings(widgetSettings);
-      setStep("done");
+      setStep("vapi");
     }
   }, [step, widgetSettings, setWidgetSettings, setLoadingMessage, setStep]);
+
+  const getVapiSecrets = useAction(api.public.secrets.getVapiSecrets);
+
+  useEffect(() => {
+    if (step !== "vapi" || !organizationId) return;
+    setLoadingMessage("Loading Vapi Settings");
+    getVapiSecrets({ organizationId })
+      .then((secret) => {
+        setVapiSecrets(secret);
+        setStep("done");
+      })
+      .catch(() => {
+        setVapiSecrets(null);
+        setStep("done");
+      });
+  }, [
+    step,
+    organizationId,
+    getVapiSecrets,
+    setVapiSecrets,
+    setLoadingMessage,
+    setStep,
+  ]);
 
   useEffect(() => {
     if (step !== "done") {
