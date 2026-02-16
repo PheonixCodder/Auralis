@@ -77,7 +77,7 @@ export const WidgetSelectionScreen = () => {
           </div>
           <ChevronRightIcon />
         </Button>
-        {hasVapiSecrets && widgetSettings?.vapiSettings.assistantId && (
+        {hasVapiSecrets && widgetSettings?.vapiSettings?.assistantId && (
           <Button
             disabled={isPending}
             className="h-16 w-full justify-between"
@@ -91,7 +91,7 @@ export const WidgetSelectionScreen = () => {
             <ChevronRightIcon />
           </Button>
         )}
-        {hasVapiSecrets && widgetSettings?.vapiSettings.phoneNumber && (
+        {hasVapiSecrets && widgetSettings?.vapiSettings?.phoneNumber && (
           <Button
             disabled={isPending}
             className="h-16 w-full justify-between"
