@@ -43,8 +43,10 @@ export const WidgetContactScreen = () => {
         </div>
       </WidgetHeader>
       <div className="flex h-full flex-col items-center justify-center gap-y-4">
-        <div className="flex items-center justify-center rounded-full border bg-white p-3">
-          <PhoneIcon className="size-6 text-muted-foreground" />
+        <div className="flex flex-col items-center gap-y-2">
+          <div className="flex items-center justify-center rounded-full border bg-white p-3">
+            <PhoneIcon className="size-6 text-muted-foreground" />
+          </div>
           <p className="text-muted-foreground">Available 24/7</p>
           <p className="font-bold text-2xl">{phoneNumber}</p>
         </div>
