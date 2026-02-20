@@ -44,6 +44,7 @@
     "@sentry/nextjs": "10",
     "@workspace/backend": "workspace:*",
     "@workspace/ui": "workspace:*",
+    "bowser": "^2.14.1",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "convex": "^1.31.2",
