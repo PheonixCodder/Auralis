@@ -68,7 +68,7 @@ export const ContactPanel = () => {
 
   const userAgentInfo = useMemo(
     () => parseUserAgent(contactSession?.metadata?.userAgent),
-    [],
+    [contactSession, parseUserAgent],
   );
 
   const countyInfo = useMemo(() => {
