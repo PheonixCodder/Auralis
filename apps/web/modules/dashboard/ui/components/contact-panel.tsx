@@ -23,7 +23,6 @@ type InfoItem = {
   value: string | React.ReactNode;
   className?: string;
 };
-
 type InfoSection = {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -34,27 +33,19 @@ type InfoSection = {
 export const ContactPanel = () => {
   const params = useParams();
   const conversationId = params.conversationId as Id<"conversations">;
-
-  const contactSession = useQuery(
-    api.private.contactSessions.getOneByConversationId,
-    {
-      conversationId,
-    },
-  );
-
-  if (!contactSession) {
-    return null;
-  }
+  
+  // 1. Keep hooks at the top level, unconditional
+  const contactSession = useQuery(api.private.contactSessions.getOneByConversationId, {
+    conversationId,
+  });
 
   const parseUserAgent = useMemo(() => {
     return (userAgent?: string) => {
       if (!userAgent) {
         return { browser: "Unknown", os: "Unknown", device: "Unknown" };
       }
-
       const browser = Bowser.getParser(userAgent);
       const result = browser.getResult();
-
       return {
         browser: result.browser.name || "unknown",
         browserVersion: result.browser.version || "unknown",
@@ -66,17 +57,20 @@ export const ContactPanel = () => {
     };
   }, []);
 
-  const userAgentInfo = useMemo(
-    () => parseUserAgent(contactSession?.metadata?.userAgent),
-    [contactSession, parseUserAgent],
-  );
+  // 2. Fixed dependency array to include contactSession for updates
+  const userAgentInfo = useMemo(() => {
+    return parseUserAgent(contactSession?.metadata?.userAgent);
+  }, [contactSession?.metadata?.userAgent, parseUserAgent]);
 
   const countyInfo = useMemo(() => {
+    if (!contactSession?.metadata?.timezone) return null;
     return getCountryFromTimeZone(contactSession.metadata.timezone);
-  }, [contactSession.metadata.timezone]);
+  }, [contactSession?.metadata?.timezone]);
 
   const accordionSections = useMemo<InfoSection[]>(() => {
-    if (!contactSession?.metadata) return [];
+    // 3. Handle loading/missing data inside the memo
+    if (!contactSession || !contactSession.metadata) return [];
+
     return [
       {
         id: "device-info",
@@ -87,9 +81,7 @@ export const ContactPanel = () => {
             label: "Browser",
             value:
               userAgentInfo.browser +
-              (userAgentInfo.browserVersion
-                ? ` ${userAgentInfo.browserVersion}`
-                : ""),
+              (userAgentInfo.browserVersion ? ` ${userAgentInfo.browserVersion}` : ""),
           },
           {
             label: "OS",
@@ -101,9 +93,7 @@ export const ContactPanel = () => {
             label: "Device",
             value:
               userAgentInfo.device +
-              (userAgentInfo.deviceModel
-                ? ` - ${userAgentInfo.deviceModel}`
-                : ""),
+              (userAgentInfo.deviceModel ? ` - ${userAgentInfo.deviceModel}` : ""),
             className: "capitalize",
           },
           {
@@ -116,9 +106,7 @@ export const ContactPanel = () => {
           },
           {
             label: "Cookies",
-            value: contactSession.metadata.cookieEnabled
-              ? "Enabled"
-              : "Disabled",
+            value: contactSession.metadata.cookieEnabled ? "Enabled" : "Disabled",
           },
         ],
       },
@@ -163,14 +151,17 @@ export const ContactPanel = () => {
     ];
   }, [userAgentInfo, contactSession, countyInfo]);
 
+  // 4. Early return now happens AFTER all hooks are defined
+  if (!contactSession) {
+    return null; // Or a loading skeleton
+  }
+
   return (
     <div className="flex h-full w-full flex-col bg-background text-foreground">
       <div className="flex flex-col gap-y-4 p-4">
         <div className="flex items-center gap-x-2">
           <DicebearAvatar
-            badgeImageUrl={
-              countyInfo?.code ? getCountryFlagUrl(countyInfo.code) : undefined
-            }
+            badgeImageUrl={countyInfo?.code ? getCountryFlagUrl(countyInfo.code) : undefined}
             seed={contactSession._id}
             size={42}
           />
