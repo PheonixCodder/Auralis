@@ -168,20 +168,6 @@ export const list = query({
       });
     }
 
-    const subscription = await ctx.runQuery(
-      internal.system.subscriptions.getByOrganizationId,
-      {
-        organizationId: orgId,
-      },
-    );
-
-    if (subscription?.status !== "active") {
-      throw new ConvexError({
-        code: "BAD_REQUEST",
-        message: "Missing Subscription",
-      });
-    }
-
     const namespace = await rag.getNamespace(ctx, {
       namespace: orgId,
     });
