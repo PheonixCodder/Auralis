@@ -60,7 +60,7 @@ const features: Feature[] = [
   {
     icon: PaletteIcon,
     label: "Widget Customization",
-    description: "Customize the appearance of of your chat widget",
+    description: "Customize the appearance of your chat widget",
   },
 ];
 
@@ -106,7 +106,7 @@ export const PremiumFeatureOverlay = ({
             <Button
               className="w-full"
               onClick={() => router.push("/billing")}
-            ></Button>
+            >Upgrade to Pro</Button>
           </CardContent>
         </Card>
       </div>
