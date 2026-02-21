@@ -1,11 +1,12 @@
 import { VapiClient, Vapi } from "@vapi-ai/server-sdk";
 import { internal } from "../_generated/api";
-import { action } from "../_generated/server";
+import { action, ActionCtx } from "../_generated/server";
 import { getSecretValue, parseSecretValue } from "../lib/secrets";
 import { ConvexError } from "convex/values";
+import { RegisteredAction } from "convex/server";
 
-export const getAssistants = action({
-  async handler(ctx): Promise<Vapi.Assistant[]> {
+export const getAssistants: RegisteredAction<"public", {}, Promise<Vapi.Assistant[]>> = action({
+  async handler(ctx: ActionCtx): Promise<Vapi.Assistant[]> {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -64,7 +65,7 @@ export const getAssistants = action({
   },
 });
 
-export const getPhoneNumbers = action({
+export const getPhoneNumbers: RegisteredAction<"public", {}, Promise<Vapi.ListPhoneNumbersResponseItem[]>> = action({
   async handler(ctx): Promise<Vapi.ListPhoneNumbersResponseItem[]> {
     const identity = await ctx.auth.getUserIdentity();
 

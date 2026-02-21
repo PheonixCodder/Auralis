@@ -1,6 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalPassThroughEnv": ["CONVEX_DEPLOY_KEY"],
+  "globalEnv": [
+    "CLERK_SECRET_KEY",
+    "SENTRY_AUTH_TOKEN",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
