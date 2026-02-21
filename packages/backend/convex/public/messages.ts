@@ -50,7 +50,20 @@ export const create = action({
       });
     }
 
-    const shouldTriggerAgent = conversation.status === "unresolved";
+    await ctx.runMutation(internal.system.contactSessions.refresh, {
+      contactSessionId,
+    });
+
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      {
+        organizationId: conversation.organizationId,
+      },
+    );
+
+    const shouldTriggerAgent =
+      conversation.status === "unresolved" &&
+      subscription?.status === "active";
 
     if (shouldTriggerAgent) {
       await supportAgent.generateText(
@@ -58,7 +71,11 @@ export const create = action({
         { threadId },
         {
           prompt,
-          tools: { resolveConversationTool, escalateConversationTool, searchTool },
+          tools: {
+            resolveConversationTool,
+            escalateConversationTool,
+            searchTool,
+          },
         },
       );
     } else {
