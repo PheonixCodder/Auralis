@@ -3,7 +3,7 @@ import { action, mutation, query } from "../_generated/server";
 import { supportAgent } from "../system/ai/agents/supportAgent";
 import { paginationOptsValidator } from "convex/server";
 import { saveMessage } from "@convex-dev/agent";
-import { components } from "../_generated/api";
+import { components, internal } from "../_generated/api";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
@@ -28,12 +28,26 @@ export const enhanceResponse = action({
       });
     }
 
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      {
+        organizationId: orgId,
+      },
+    );
+
+    if (subscription?.status !== "active") {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Missing Subscription",
+      });
+    }
+
     const response = await generateText({
       model: openai("gpt-4o-mini"),
       messages: [
         {
           role: "system",
-          content: OPERATOR_MESSAGE_ENHANCEMENT_PROMPT
+          content: OPERATOR_MESSAGE_ENHANCEMENT_PROMPT,
         },
         {
           role: "user",
