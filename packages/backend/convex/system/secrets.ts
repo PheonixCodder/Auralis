@@ -10,7 +10,7 @@ export const upsert = internalAction({
     value: v.any(),
   },
   async handler(ctx, args) {
-    const secretName = `tenant/${args.organizationId}/${args.service}`;
+    const secretName = `/tenant/${args.organizationId}/${args.service}`;
     await setSecretValue(secretName, args.value);
     await ctx.runMutation(internal.system.plugins.upsert, {
       organizationId: args.organizationId,

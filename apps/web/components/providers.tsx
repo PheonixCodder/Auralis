@@ -11,7 +11,7 @@ const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{ variables: { colorPrimary: "#3C82F6" } }}>
       <Toaster />
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
         {children}
