@@ -14,11 +14,6 @@ export const INTEGRATIONS = [
     title: "Next JS",
     icon: "/languages/nextjs.svg",
   },
-  {
-    id: "html",
-    title: "HTML",
-    icon: "/languages/html5.svg",
-  },
 ];
 
 export type IntegrationId = (typeof INTEGRATIONS)[number]["id"];

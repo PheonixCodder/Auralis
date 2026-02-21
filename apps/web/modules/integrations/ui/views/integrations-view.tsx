@@ -58,14 +58,14 @@ export const IntegrationsView = () => {
           </div>
           <div className="mt-8 space-y-6">
             <div className="flex items-center gap-4">
-              <Label className="w-34" htmlFor="website-id">
+              <Label className="w-34" htmlFor="organization-id">
                 Organization ID
               </Label>
               <Input
                 disabled
                 id="organization-id"
                 readOnly
-                value={organization?.id}
+                value={organization?.id ?? ""}
                 className="flex-1 bg-background font-mono text-sm"
               />
               <Button onClick={handleCopy} className="gap-2" size={"sm"}>
@@ -151,7 +151,7 @@ export const IntegrationsDialog = ({
           </div>
           <div className="space-y-2">
             <div className="rounded-md bg-accent p-2 text-sm">
-              1. Add the code in your page
+              2. Add the code in your page
             </div>
             <p className="text-muted-foreground text-sm">
               Paste the chatbot code above in your page. You can add it in the
