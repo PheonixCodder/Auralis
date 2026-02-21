@@ -1,7 +1,21 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "../_generated/server";
+import { RegisteredMutation, RegisteredQuery } from "convex/server";
+import { Doc } from "../_generated/dataModel";
 
-export const upsert = mutation({
+export const upsert: RegisteredMutation<
+  "public",
+  {
+    greetMessage: string;
+    defaultSuggestions: {
+      suggestion1?: string;
+      suggestion2?: string;
+      suggestion3?: string;
+    };
+    vapiSettings: { assistantId?: string; phoneNumber?: string };
+  },
+  Promise<void>
+> = mutation({
   args: {
     greetMessage: v.string(),
     defaultSuggestions: v.object({
@@ -54,7 +68,11 @@ export const upsert = mutation({
   },
 });
 
-export const getOne = query({
+export const getOne: RegisteredQuery<
+  "public",
+  {},
+  Promise<Doc<"widgetSettings"> | null>
+> = query({
   async handler(ctx) {
     const identity = await ctx.auth.getUserIdentity();
 

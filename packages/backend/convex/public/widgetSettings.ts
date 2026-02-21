@@ -1,7 +1,13 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "../_generated/server";
+import { RegisteredQuery } from "convex/server";
+import { Doc } from "../_generated/dataModel";
 
-export const getByOrganizationId = query({
+export const getByOrganizationId: RegisteredQuery<
+  "public",
+  { organizationId: string },
+  Promise<Doc<"widgetSettings"> | null>
+> = query({
   args: {
     organizationId: v.string(),
   },
@@ -17,7 +23,11 @@ export const getByOrganizationId = query({
   },
 });
 
-export const getOne = query({
+export const getOne: RegisteredQuery<
+  "public",
+  {},
+  Promise<Doc<"widgetSettings"> | null>
+> = query({
   async handler(ctx) {
     const identity = await ctx.auth.getUserIdentity();
 
